@@ -13,6 +13,7 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
   start_http_server(args.port)
+  print(time.ctime() + " :: starting wifi-exporter, listening on port " + str(args.port) )
   avail = Gauge("max_wifi_signal_available", "wifi max signal % available for SSID" , ['ssid','freq','ap_mac'])
   in_use = Gauge("wifi_signal_for_net_in_use", "wifi signal for network currently in use", ['ssid','freq','ap_mac'])
   while True:
@@ -26,7 +27,7 @@ if __name__ == "__main__":
       for net in nets: avail.labels(ssid=str(net['ESSID'],'utf-8'),
                                     freq=str(net['Frequency'],'utf-8'),
                                     ap_mac=str(net['Access Point'],'utf-8')).set(net['stats']['quality'])
-    except: print(time.ctime() + ":: wifi scan failure")
+    except: print(time.ctime() + " :: wifi scan failure")
     time.sleep(args.polling_interval)
 
 # sample element from iwlist.scan(args.iface)
