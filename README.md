@@ -5,6 +5,8 @@ usage: `python3 exporter.py --port <port> --polling-interval <time> --interface 
 
 arguments are optional. default value for port is 3012, default value for polling interval is 7 sec, default interface is wlan0
 
+within docker, the arguments --net="host" need to be added to expose the wireless interface to the container
+
 sample output:
   
 ```
