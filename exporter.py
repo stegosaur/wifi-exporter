@@ -14,14 +14,12 @@ args = parser.parse_args()
 if __name__ == "__main__":
   start_http_server(args.port)
   print(time.ctime() + " :: starting wifi-exporter, listening on port " + str(args.port) )
-  avail = Gauge("max_wifi_signal_available", "wifi max signal % available for SSID" , ['ssid','freq','ap_mac'])
+  avail = Gauge("max_wifi_signal_available", "wifi max signal % available for SSID" , ['ssid'])
   in_use = Gauge("wifi_signal_for_net_in_use", "wifi signal for network currently in use", ['ssid','freq','ap_mac'])
   while True:
     ssids = {}
     current_net=iwlib.iwconfig.get_iwconfig(args.iface)
-    in_use.labels(ssid=str(current_net['ESSID'],'utf-8'),
-                  freq=str(current_net['Frequency'],'utf-8'),
-                  ap_mac=str(current_net['Access Point'],'utf-8')).set(current_net['stats']['quality'])
+    in_use.labels(ssid=str(current_net['ESSID'],'utf-8').set(current_net['stats']['quality'])
     try:
       nets=iwlist.scan(args.iface)
       for net in nets: avail.labels(ssid=str(net['ESSID'],'utf-8'),
