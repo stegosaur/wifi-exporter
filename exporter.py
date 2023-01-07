@@ -27,7 +27,7 @@ if __name__ == "__main__":
                                     freq=str(net['Frequency'],'utf-8'),
                                     ap_mac=str(net['Access Point'],'utf-8')).set(net['stats']['quality'])
     except: print(time.ctime() + " :: wifi scan failure")
-    time.sleep(args.polling_interval)# sample element from iwlist.scan(args.iface)
+    time.sleep(args.polling_interval)
     in_use.clear()
     
 # sample element from iwlist.scan(args.iface)
@@ -44,3 +44,4 @@ if __name__ == "__main__":
 #      'noise': 0,
 #      'updated': 75
 #    }
+#  }
