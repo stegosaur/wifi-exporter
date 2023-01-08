@@ -2,7 +2,7 @@ import time
 import argparse
 import iwlib
 from iwlib import iwlist
-from prometheus_client import start_http_server, Gauge
+import prometheus_client
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", action="store", dest="port", type=int, default=3012)
@@ -12,10 +12,10 @@ parser.add_argument("--interface", action="store", dest="iface", type=str, defau
 args = parser.parse_args()
 
 if __name__ == "__main__":
-  start_http_server(args.port)
+  prometheus_client.start_http_server(args.port)
   print(time.ctime() + " :: starting wifi-exporter, listening on port " + str(args.port) )
-  avail = Gauge("wifi_signal_available", "wifi signal % available for SSID" , ['ssid','freq','ap_mac'])
-  in_use = Gauge("wifi_signal_for_net_in_use", "wifi signal for network currently in use", ['ssid','freq','ap_mac'])
+  avail = prometheus_client.Gauge("wifi_signal_available", "wifi signal % available for SSID" , ['ssid','freq','ap_mac'])
+  in_use = prometheus_client.Gauge("wifi_signal_for_net_in_use", "wifi signal for network currently in use", ['ssid','freq','ap_mac'])
   while True:
     current_net=iwlib.iwconfig.get_iwconfig(args.iface)
     in_use.labels(ssid=str(current_net['ESSID'],'utf-8'),
@@ -27,10 +27,9 @@ if __name__ == "__main__":
                                     freq=str(net['Frequency'],'utf-8'),
                                     ap_mac=str(net['Access Point'],'utf-8')).set(net['stats']['quality'])
     except: print(time.ctime() + " :: wifi scan failure")
-    time.sleep(args.polling_interval)
+    time.sleep(args.polling_interval)# sample element from iwlist.scan(args.iface)
     in_use.clear()
-    
-# sample element from iwlist.scan(args.iface)
+
 #  {
 #    'Mode': b'Master',
 #    'ESSID': b'Eagle',
@@ -44,4 +43,3 @@ if __name__ == "__main__":
 #      'noise': 0,
 #      'updated': 75
 #    }
-#  }
